@@ -1,21 +1,18 @@
-/* ===== Celtic Moon Studios Theme ===== */
+/* ===== Theme ===== */
 :root{
-  --emerald-50:#f2fbf7;
-  --emerald-100:#e2f6ef;
-  --emerald-200:#c8efe1;
-  --emerald-300:#a3e3cc;
-  --emerald-500:#2e7d6b;
-  --emerald-700:#145a50;
+  --purple-50:#f8f4fc;
+  --purple-100:#efe7fa;
+  --purple-200:#e2d3f6;
+  --purple-300:#cbb3ee;
+  --purple-500:#7d4a8b;
+  --purple-700:#5a3370;
   --gold-400:#d4af37;
   --gold-500:#c49b22;
   --ink:#1f1b24;
   --ink-2:#3b3542;
-  --muted:#5c5a65;
-  --line:#e6ece9;
+  --muted:#6d6676;
+  --line:#e8e2ef;
   --white:#fff;
-
-  /* Inline Celtic knot pattern (data URI SVG) */
-  --knot: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%23145a50' stroke-width='1.1'><path d='M6 6c3 0 3 3 6 3s3-3 6-3M6 18c3 0 3-3 6-3s3 3 6 3'/><path d='M6 6c0 3 3 3 3 6s-3 3-3 6M18 6c0 3-3 3-3 6s3 3 3 6'/></svg>");
 }
 
 /* Base */
@@ -24,36 +21,14 @@ html,body{margin:0}
 body{
   font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   color:var(--ink);
-  background:var(--emerald-50);
+  background:var(--purple-50);
 }
 img{max-width:100%;display:block}
 .eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:.75rem;color:var(--muted)}
 
-/* Celtic knot side trims */
-.knot-trim::before,
-.knot-trim::after{
-  content:"";
-  position:fixed;
-  top:0; bottom:0;
-  width:18px;
-  background:
-    radial-gradient(circle at center, rgba(255,255,255,0.7), rgba(255,255,255,0)) ,
-    var(--knot);
-  background-repeat: repeat;
-  background-size: 24px 24px, 48px 48px;
-  opacity:.5;
-  z-index:0;
-  pointer-events:none;
-}
-.knot-trim::before{ left:0; border-right:1px solid var(--line); }
-.knot-trim::after{ right:0; border-left:1px solid var(--line); }
-
-/* Ensure content sits above trims */
-.promo, .site-header, .nav, .hero, main, .section-pad, .site-footer, .cart-drawer{ position:relative; z-index:1; }
-
 /* Promo */
 .promo{
-  background:linear-gradient(90deg,var(--emerald-300),var(--emerald-200));
+  background:linear-gradient(90deg,var(--purple-300),var(--purple-200));
   color:var(--ink);
   text-align:center;
   padding:.5rem .75rem;
@@ -71,13 +46,13 @@ img{max-width:100%;display:block}
   max-width:1200px;margin:0 auto;padding:.75rem 1rem;
 }
 .logo{font-family:"Playfair Display",serif;font-size:1.4rem;text-decoration:none;color:var(--ink)}
-.logo span{color:var(--emerald-700)}
+.logo span{color:var(--purple-700)}
 .search{flex:1;display:flex;gap:.5rem;align-items:center}
 .search input{
   flex:1;padding:.6rem .75rem;border:1px solid var(--line);border-radius:999px;background:#fff
 }
 .search button{
-  border:none;background:var(--emerald-500);color:#fff;border-radius:999px;
+  border:none;background:var(--purple-500);color:#fff;border-radius:999px;
   padding:.55rem .8rem;cursor:pointer
 }
 .header-actions{display:flex;align-items:center;gap:.75rem}
@@ -103,15 +78,15 @@ img{max-width:100%;display:block}
 .has-mega:focus-within .mega{display:grid;grid-template-columns:repeat(4,1fr)}
 .mega-col h4{margin:.25rem 0 .5rem;font-family:"Playfair Display",serif}
 .mega-col a{display:block;color:var(--ink-2);text-decoration:none;padding:.25rem 0}
-.mega-col a:hover{color:var(--emerald-700)}
+.mega-col a:hover{color:var(--purple-700)}
 .mega-cta{display:flex;align-items:center}
 .mega-cta-card{
-  background:linear-gradient(135deg,var(--emerald-100),#fff);
+  background:linear-gradient(135deg,var(--purple-100),#fff);
   border:1px solid var(--line);padding:1rem;border-radius:.75rem
 }
 .btn{display:inline-block;text-decoration:none;border:none;cursor:pointer;border-radius:.5rem;font-weight:600}
-.btn-primary{background:var(--emerald-700);color:#fff;padding:.7rem 1rem}
-.btn-primary:hover{background:var(--emerald-500)}
+.btn-primary{background:var(--purple-700);color:#fff;padding:.7rem 1rem}
+.btn-primary:hover{background:var(--purple-500)}
 .btn-gold{background:var(--gold-500);color:#1a1200;padding:.6rem .9rem}
 .btn-gold:hover{background:var(--gold-400)}
 .btn-block{display:block;width:100%}
@@ -122,22 +97,20 @@ img{max-width:100%;display:block}
 
 /* Hero */
 .hero{
+  background:
+    linear-gradient(45deg,rgba(125,74,139,.25),rgba(212,175,55,.20)),
+    url('https://images.unsplash.com/photo-1523292562811-8fa7962a78c8?q=80&w=1600') center/cover no-repeat;
   color:#fff;text-align:center;min-height:46vh;display:flex;align-items:center;justify-content:center
 }
 .hero-inner{backdrop-filter:blur(2px);padding:2.5rem 1.25rem}
 .hero h1{font-family:"Playfair Display",serif;font-size:2.2rem;margin:.2rem 0}
 .hero p{max-width:640px;margin:.5rem auto 1.25rem}
-.hero-celtic{
-  background:
-    linear-gradient(45deg,rgba(20,90,80,.30),rgba(212,175,55,.22)),
-    url('https://images.unsplash.com/photo-1523292562811-8fa7962a78c8?q=80&w=1600') center/cover no-repeat;
-}
 
 /* Tiles */
 .tiles{max-width:1200px;margin:2rem auto;display:grid;gap:1rem;grid-template-columns:repeat(3,1fr);padding:0 1rem}
 .tile{
   position:relative;display:block;height:220px;border-radius:.75rem;overflow:hidden;text-decoration:none;color:#fff;
-  background:var(--emerald-300)
+  background:var(--purple-300)
 }
 .tile::before{
   content:"";position:absolute;inset:0;background-image:var(--img);background-size:cover;background-position:center;filter:grayscale(.1) contrast(.95) brightness(.85)
@@ -166,7 +139,7 @@ img{max-width:100%;display:block}
 .card-img{aspect-ratio:1/1;object-fit:cover;width:100%}
 .card-body{padding:.8rem}
 .card-title{margin:.2rem 0;font-weight:600}
-.card-price{color:var(--emerald-700);font-weight:700}
+.card-price{color:var(--purple-700);font-weight:700}
 .card-actions{display:flex;gap:.5rem;padding:.8rem;border-top:1px solid var(--line)}
 .qty-pill{border:1px solid var(--line);border-radius:999px;display:flex;align-items:center;gap:.5rem;padding:.25rem .5rem}
 .qty-pill button{border:none;background:none;cursor:pointer;font-size:1rem}
@@ -177,7 +150,7 @@ img{max-width:100%;display:block}
 .footer-grid{max-width:1200px;margin:0 auto;padding:2rem 1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
 .site-footer h4{margin:.2rem 0 1rem}
 .site-footer a{display:block;color:var(--ink-2);text-decoration:none;padding:.15rem 0}
-.site-footer a:hover{color:var(--emerald-700)}
+.site-footer a:hover{color:var(--purple-700)}
 .newsletter{display:flex;gap:.4rem}
 .newsletter input{flex:1;border:1px solid var(--line);border-radius:.5rem;padding:.55rem .7rem}
 .legal{text-align:center;color:var(--muted);padding:0 1rem 1.5rem}

@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Thank You • Celtic Moon Studios</title>
+  <title>Thank You • Emma’s Jewelry</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --emerald-50:#f2fbf7; --emerald-500:#2e7d6b; --emerald-700:#145a50;
-      --gold-500:#c49b22; --ink:#1f1b24; --muted:#5c5a65; --line:#e6ece9; --white:#fff;
+      --purple-50:#f8f4fc; --purple-200:#e2d3f6; --purple-500:#7d4a8b; --purple-700:#5a3370;
+      --gold-500:#c49b22; --ink:#1f1b24; --muted:#6d6676; --line:#e8e2ef; --white:#fff;
     }
     *{box-sizing:border-box} html,body{margin:0}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--emerald-50);color:var(--ink)}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--purple-50);color:var(--ink)}
     header{background:var(--white);border-bottom:1px solid var(--line)}
     .wrap{max-width:900px;margin:0 auto;padding:1.25rem}
     .brand{font-family:"Playfair Display",serif;font-size:1.4rem;text-decoration:none;color:var(--ink)}
-    .brand span{color:var(--emerald-700)}
+    .brand span{color:var(--purple-700)}
     .card{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:1rem}
     h1{font-family:"Playfair Display",serif}
     .summary{margin-top:1rem;display:grid;grid-template-columns:1fr;gap:1rem}
@@ -23,21 +23,21 @@
     .items .item{display:grid;grid-template-columns:64px 1fr auto;gap:.75rem;align-items:center;border-bottom:1px solid var(--line);padding:.5rem 0}
     .items img{width:64px;height:64px;border-radius:.5rem;object-fit:cover}
     .muted{color:var(--muted)}
-    .btn{display:inline-block;margin-top:1rem;text-decoration:none;background:var(--emerald-700);color:#fff;padding:.6rem .9rem;border-radius:.5rem}
-    .btn:hover{background:var(--emerald-500)}
+    .btn{display:inline-block;margin-top:1rem;text-decoration:none;background:var(--purple-700);color:#fff;padding:.6rem .9rem;border-radius:.5rem}
+    .btn:hover{background:var(--purple-500)}
   </style>
 </head>
-<body class="knot-trim">
+<body>
   <header>
     <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
-      <a class="brand" href="index.html">Celtic <span>Moon</span> Studios</a>
+      <a class="brand" href="index.html">Emma’s <span>Jewelry</span></a>
       <a class="btn" href="index.html">Continue Shopping</a>
     </div>
   </header>
 
   <main class="wrap">
     <div class="card">
-      <h1>Thank you for your order! 🌙</h1>
+      <h1>Thank you for your order! 💜</h1>
       <p class="muted" id="order-line">We’ve sent a receipt to your email.</p>
 
       <div class="summary">
@@ -65,7 +65,7 @@
 
   <script>
     const money = n => `$${n.toFixed(2)}`;
-    const data = JSON.parse(localStorage.getItem("cms_last_order") || "null");
+    const data = JSON.parse(localStorage.getItem("emma_last_order") || "null");
 
     if(!data){
       document.querySelector(".card").innerHTML = `
@@ -79,6 +79,7 @@
       const dt = new Date(data.when); 
       document.getElementById("odate").textContent = dt.toLocaleString();
 
+      // Items
       const list = document.getElementById("items");
       list.innerHTML = "<h3>Items</h3>";
       data.items.forEach(it=>{
@@ -95,6 +96,7 @@
         list.appendChild(row);
       });
 
+      // Totals
       document.getElementById("t-sub").textContent = money(data.totals.subtotal);
       document.getElementById("t-ship").textContent = money(data.totals.ship);
       document.getElementById("t-tax").textContent = money(data.totals.tax);

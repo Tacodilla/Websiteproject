@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Checkout • Celtic Moon Studios</title>
+  <title>Checkout • Pay with PayPal</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --emerald-50:#f2fbf7; --emerald-100:#e2f6ef; --emerald-200:#c8efe1; --emerald-300:#a3e3cc;
-      --emerald-500:#2e7d6b; --emerald-700:#145a50;
+      --purple-50:#f8f4fc; --purple-100:#efe7fa; --purple-200:#e2d3f6; --purple-300:#cbb3ee;
+      --purple-500:#7d4a8b; --purple-700:#5a3370;
       --gold-400:#d4af37; --gold-500:#c49b22;
-      --ink:#1f1b24; --muted:#5c5a65; --line:#e6ece9; --white:#fff;
+      --ink:#1f1b24; --muted:#6d6676; --line:#e8e2ef; --white:#fff;
     }
     *{box-sizing:border-box} html,body{margin:0}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--emerald-50);color:var(--ink)}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--purple-50);color:var(--ink)}
     header{position:sticky;top:0;z-index:5;background:var(--white);border-bottom:1px solid var(--line)}
     .wrap{max-width:1000px;margin:0 auto;padding:1rem}
     .brand{font-family:"Playfair Display",serif;font-size:1.4rem;text-decoration:none;color:var(--ink)}
-    .brand span{color:var(--emerald-700)}
+    .brand span{color:var(--purple-700)}
     .checkout{display:grid;grid-template-columns:1.2fr .8fr;gap:1.25rem;padding:1.25rem}
     .card{background:#fff;border:1px solid var(--line);border-radius:.75rem}
     .card h2{margin:0;padding:1rem 1rem .25rem 1rem;font-family:"Playfair Display",serif}
@@ -34,18 +34,18 @@
     .paybox{position:sticky;top:84px}
     .note{color:var(--muted);font-size:.9rem;margin-top:.5rem}
     .success{background:#ecfff0;border:1px solid #c7efcd;color:#1c7d3a;padding:.9rem;border-radius:.6rem;margin-top:1rem;display:none}
-    .btn-link{display:inline-block;margin-top:.75rem;text-decoration:none;color:#fff;background:var(--emerald-700);padding:.6rem .9rem;border-radius:.5rem}
-    .btn-link:hover{background:var(--emerald-500)}
+    .btn-link{display:inline-block;margin-top:.75rem;text-decoration:none;color:#fff;background:var(--purple-700);padding:.6rem .9rem;border-radius:.5rem}
+    .btn-link:hover{background:var(--purple-500)}
     @media (max-width:900px){ .checkout{grid-template-columns:1fr} .paybox{position:static} }
   </style>
 
-  <!-- PayPal JS SDK: swap to your live client id when ready -->
+  <!-- PayPal JS SDK: ⬇️ PASTE YOUR SANDBOX CLIENT ID HERE ⬇️ -->
   <script src="https://www.paypal.com/sdk/js?client-id=AcfuNjLizniT2pmsJvIh7nbahY-GoqUs4e6yo5kHHNcqtycBMK8XwXLMRDRbHuK0C8SAxLqez0iLEDEr&currency=USD" data-sdk-integration-source="button-factory"></script>
 </head>
-<body class="knot-trim">
+<body>
   <header>
     <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
-      <a class="brand" href="index.html" aria-label="Back to store">Celtic <span>Moon</span> Studios</a>
+      <a class="brand" href="index.html" aria-label="Back to store">Emma’s <span>Jewelry</span></a>
       <a class="btn-link" href="index.html">← Continue Shopping</a>
     </div>
   </header>
@@ -62,6 +62,7 @@
       <aside class="card paybox" aria-labelledby="pay-title">
         <h2 id="pay-title">Payment</h2>
         <div class="body">
+          <!-- Shipping selector -->
           <div style="margin-bottom:.75rem">
             <label for="ship-method">Shipping method</label>
             <select id="ship-method">
@@ -70,6 +71,7 @@
             </select>
           </div>
 
+          <!-- Tax (simple demo) -->
           <div class="row" style="margin-bottom:.75rem">
             <div>
               <label for="ship-state">State (US)</label>
@@ -88,11 +90,13 @@
             </div>
           </div>
 
+          <!-- Totals -->
           <div class="total-row"><span class="muted">Subtotal</span><strong id="sum-subtotal">$0.00</strong></div>
           <div class="total-row"><span class="muted">Shipping</span><strong id="sum-shipping">$0.00</strong></div>
           <div class="total-row"><span class="muted">Tax</span><strong id="sum-tax">$0.00</strong></div>
           <div class="total"><span>Total</span><strong id="sum-total">$0.00</strong></div>
 
+          <!-- PayPal Buttons mount point -->
           <div id="paypal-buttons" style="margin-top:12px;"></div>
 
           <p class="note">Secure payment via PayPal. You can pay with your PayPal balance or card.</p>
@@ -104,22 +108,29 @@
 
   <script>
     // ===== Cart =====
-    const CART_KEY = "cms_cart_v1"; // renamed key to avoid conflicts
+    const CART_KEY = "emma_cart_v1";
     let cart = [];
     try { cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); } catch(e){ cart = []; }
 
     const money = n => `$${n.toFixed(2)}`;
     const sum = () => cart.reduce((s,it)=> s + (it.price * it.qty), 0);
 
+    // Shipping rules
     function shippingFor(subtotal, method){
       const FREE_THRESH = 75;
-      if(method === "standard"){ return subtotal >= FREE_THRESH ? 0 : 6.95; }
-      if(method === "expedited"){ return 14.95; }
+      if(method === "standard"){
+        return subtotal >= FREE_THRESH ? 0 : 6.95;
+      }
+      if(method === "expedited"){
+        return 14.95;
+      }
       return 0;
     }
 
+    // Simple state tax rates (demo only)
     const TAX = { CO:0.029, CA:0.0725, NY:0.04, TX:0.0625, FL:0.06, OTHER:0 };
 
+    // DOM
     const orderBody = document.getElementById('order-body');
     const elSub = document.getElementById('sum-subtotal');
     const elShip = document.getElementById('sum-shipping');
@@ -143,12 +154,12 @@
         const row = document.createElement('div');
         row.className = 'summary-item';
         row.innerHTML = `
-          <img src="\${it.img}" alt="\${it.name}">
+          <img src="${it.img}" alt="${it.name}">
           <div>
-            <div><strong>\${it.name}</strong></div>
-            <div class="muted">Qty: \${it.qty}</div>
+            <div><strong>${it.name}</strong></div>
+            <div class="muted">Qty: ${it.qty}</div>
           </div>
-          <div><strong>\${money(it.price * it.qty)}</strong></div>
+          <div><strong>${money(it.price * it.qty)}</strong></div>
         `;
         orderBody.appendChild(row);
       });
@@ -182,6 +193,7 @@
       paypal.Buttons({
         style: { layout:'vertical', color:'gold', shape:'rect', label:'paypal' },
 
+        // Create the order for the exact total (subtotal+shipping+tax)
         createOrder: function(data, actions) {
           if (cart.length === 0) {
             alert("Your cart is empty.");
@@ -207,12 +219,13 @@
                 }
               },
               items: itemLines,
-              description: "Celtic Moon Studios Order"
+              description: "Emma’s Jewelry Order"
             }],
             application_context: { shipping_preference: "GET_FROM_FILE" }
           });
         },
 
+        // Capture the order
         onApprove: function(data, actions) {
           return actions.order.capture().then(function(details) {
             const totals = calcTotals();
@@ -224,7 +237,7 @@
               items: cart,
               when: new Date().toISOString(),
             };
-            localStorage.setItem("cms_last_order", JSON.stringify(receipt));
+            localStorage.setItem("emma_last_order", JSON.stringify(receipt));
             localStorage.removeItem(CART_KEY);
 
             const msg = document.getElementById('success');
