@@ -3,73 +3,255 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Payment - Rose Quartz Bracelet</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Checkout • Pay with PayPal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    .payment-page {
-      max-width: 500px;
-      margin: 60px auto;
-      background: #fff0f0;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
+    :root{
+      --purple-50:#f8f4fc; --purple-100:#efe7fa; --purple-200:#e2d3f6; --purple-300:#cbb3ee;
+      --purple-500:#7d4a8b; --purple-700:#5a3370;
+      --gold-400:#d4af37; --gold-500:#c49b22;
+      --ink:#1f1b24; --muted:#6d6676; --line:#e8e2ef; --white:#fff;
     }
-
-    .payment-page h2 {
-      font-family: 'Playfair Display', serif;
-      margin-bottom: 20px;
-    }
-
-    .payment-page input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    .payment-page button {
-      background-color: #d67373;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    .payment-page button:hover {
-      background-color: #b34c4c;
-    }
-
-    .confirmation {
-      margin-top: 20px;
-      color: green;
-      font-weight: bold;
-    }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--purple-50);color:var(--ink)}
+    header{position:sticky;top:0;z-index:5;background:var(--white);border-bottom:1px solid var(--line)}
+    .wrap{max-width:1000px;margin:0 auto;padding:1rem}
+    .brand{font-family:"Playfair Display",serif;font-size:1.4rem;text-decoration:none;color:var(--ink)}
+    .brand span{color:var(--purple-700)}
+    .checkout{display:grid;grid-template-columns:1.2fr .8fr;gap:1.25rem;padding:1.25rem}
+    .card{background:#fff;border:1px solid var(--line);border-radius:.75rem}
+    .card h2{margin:0;padding:1rem 1rem .25rem 1rem;font-family:"Playfair Display",serif}
+    .card .body{padding:1rem}
+    .summary-item{display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0}
+    .summary-item img{width:64px;height:64px;border-radius:.5rem;object-fit:cover}
+    .muted{color:var(--muted)}
+    .row{display:flex;gap:.6rem;align-items:center}
+    .row > *{flex:1}
+    select,input[type="text"]{border:1px solid var(--line);border-radius:.5rem;padding:.55rem .6rem;width:100%}
+    label{font-size:.9rem;color:var(--muted)}
+    .total-row{display:flex;justify-content:space-between;margin:.35rem 0}
+    .total{display:flex;justify-content:space-between;font-weight:700;margin-top:.5rem;font-size:1.1rem}
+    .paybox{position:sticky;top:84px}
+    .note{color:var(--muted);font-size:.9rem;margin-top:.5rem}
+    .success{background:#ecfff0;border:1px solid #c7efcd;color:#1c7d3a;padding:.9rem;border-radius:.6rem;margin-top:1rem;display:none}
+    .btn-link{display:inline-block;margin-top:.75rem;text-decoration:none;color:#fff;background:var(--purple-700);padding:.6rem .9rem;border-radius:.5rem}
+    .btn-link:hover{background:var(--purple-500)}
+    @media (max-width:900px){ .checkout{grid-template-columns:1fr} .paybox{position:static} }
   </style>
+
+  <!-- PayPal JS SDK: ⬇️ PASTE YOUR SANDBOX CLIENT ID HERE ⬇️ -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcfuNjLizniT2pmsJvIh7nbahY-GoqUs4e6yo5kHHNcqtycBMK8XwXLMRDRbHuK0C8SAxLqez0iLEDEr&currency=USD" data-sdk-integration-source="button-factory"></script>
 </head>
 <body>
-  <div class="payment-page">
-    <h2>Inez Initial Bracelet</h2>
-    <p><strong>Price:</strong> $45</p>
-    <form id="payment-form">
-      <input type="text" placeholder="Full Name" required />
-      <input type="email" placeholder="Email Address" required />
-      <input type="text" placeholder="Card Number" required />
-      <input type="text" placeholder="Expiry Date (MM/YY)" required />
-      <input type="text" placeholder="CVV" required />
-      <button type="submit">Pay $45</button>
-      <p class="confirmation"></p>
-    </form>
-  </div>
+  <header>
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
+      <a class="brand" href="index.html" aria-label="Back to store">Emma’s <span>Jewelry</span></a>
+      <a class="btn-link" href="index.html">← Continue Shopping</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="checkout">
+      <!-- Order Summary -->
+      <section class="card" aria-labelledby="order-title">
+        <h2 id="order-title">Order Summary</h2>
+        <div class="body" id="order-body"><!-- items injected by JS --></div>
+      </section>
+
+      <!-- Payment / Totals -->
+      <aside class="card paybox" aria-labelledby="pay-title">
+        <h2 id="pay-title">Payment</h2>
+        <div class="body">
+          <!-- Shipping selector -->
+          <div style="margin-bottom:.75rem">
+            <label for="ship-method">Shipping method</label>
+            <select id="ship-method">
+              <option value="standard">Standard (3–6 business days)</option>
+              <option value="expedited">Expedited (2–3 business days)</option>
+            </select>
+          </div>
+
+          <!-- Tax (simple demo) -->
+          <div class="row" style="margin-bottom:.75rem">
+            <div>
+              <label for="ship-state">State (US)</label>
+              <select id="ship-state">
+                <option value="CO">CO — 2.9%</option>
+                <option value="CA">CA — 7.25%</option>
+                <option value="NY">NY — 4.0%</option>
+                <option value="TX">TX — 6.25%</option>
+                <option value="FL">FL — 6.0%</option>
+                <option value="OTHER" selected>Other — 0%</option>
+              </select>
+            </div>
+            <div>
+              <label for="ship-zip">ZIP (optional)</label>
+              <input id="ship-zip" type="text" placeholder="ZIP code" />
+            </div>
+          </div>
+
+          <!-- Totals -->
+          <div class="total-row"><span class="muted">Subtotal</span><strong id="sum-subtotal">$0.00</strong></div>
+          <div class="total-row"><span class="muted">Shipping</span><strong id="sum-shipping">$0.00</strong></div>
+          <div class="total-row"><span class="muted">Tax</span><strong id="sum-tax">$0.00</strong></div>
+          <div class="total"><span>Total</span><strong id="sum-total">$0.00</strong></div>
+
+          <!-- PayPal Buttons mount point -->
+          <div id="paypal-buttons" style="margin-top:12px;"></div>
+
+          <p class="note">Secure payment via PayPal. You can pay with your PayPal balance or card.</p>
+          <div id="success" class="success">✅ Payment captured! Redirecting…</div>
+        </div>
+      </aside>
+    </div>
+  </main>
 
   <script>
-    document.getElementById('payment-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      document.querySelector('.confirmation').textContent = "✅ Payment successful! Thank you for your purchase.";
-      this.reset();
-    });
+    // ===== Cart =====
+    const CART_KEY = "emma_cart_v1";
+    let cart = [];
+    try { cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); } catch(e){ cart = []; }
+
+    const money = n => `$${n.toFixed(2)}`;
+    const sum = () => cart.reduce((s,it)=> s + (it.price * it.qty), 0);
+
+    // Shipping rules
+    function shippingFor(subtotal, method){
+      const FREE_THRESH = 75;
+      if(method === "standard"){
+        return subtotal >= FREE_THRESH ? 0 : 6.95;
+      }
+      if(method === "expedited"){
+        return 14.95;
+      }
+      return 0;
+    }
+
+    // Simple state tax rates (demo only)
+    const TAX = { CO:0.029, CA:0.0725, NY:0.04, TX:0.0625, FL:0.06, OTHER:0 };
+
+    // DOM
+    const orderBody = document.getElementById('order-body');
+    const elSub = document.getElementById('sum-subtotal');
+    const elShip = document.getElementById('sum-shipping');
+    const elTax = document.getElementById('sum-tax');
+    const elTotal = document.getElementById('sum-total');
+    const selShip = document.getElementById('ship-method');
+    const selState = document.getElementById('ship-state');
+
+    function renderOrder(){
+      orderBody.innerHTML = "";
+      if (cart.length === 0) {
+        orderBody.innerHTML = `
+          <p class="muted">Your cart is empty.</p>
+          <a class="btn-link" href="index.html">Shop products</a>
+        `;
+        updateTotals();
+        document.getElementById('paypal-buttons').style.display = 'none';
+        return;
+      }
+      cart.forEach(it=>{
+        const row = document.createElement('div');
+        row.className = 'summary-item';
+        row.innerHTML = `
+          <img src="${it.img}" alt="${it.name}">
+          <div>
+            <div><strong>${it.name}</strong></div>
+            <div class="muted">Qty: ${it.qty}</div>
+          </div>
+          <div><strong>${money(it.price * it.qty)}</strong></div>
+        `;
+        orderBody.appendChild(row);
+      });
+      updateTotals();
+    }
+
+    function calcTotals(){
+      const subtotal = sum();
+      const ship = shippingFor(subtotal, selShip.value);
+      const taxRate = TAX[selState.value] || 0;
+      const tax = +(subtotal * taxRate).toFixed(2);
+      const total = +(subtotal + ship + tax).toFixed(2);
+      return { subtotal, ship, tax, total };
+    }
+
+    function updateTotals(){
+      const { subtotal, ship, tax, total } = calcTotals();
+      elSub.textContent = money(subtotal);
+      elShip.textContent = money(ship);
+      elTax.textContent = money(tax);
+      elTotal.textContent = money(total);
+    }
+
+    selShip.addEventListener('change', updateTotals);
+    selState.addEventListener('change', updateTotals);
+
+    renderOrder();
+
+    // ===== PayPal Buttons =====
+    if (typeof paypal !== "undefined") {
+      paypal.Buttons({
+        style: { layout:'vertical', color:'gold', shape:'rect', label:'paypal' },
+
+        // Create the order for the exact total (subtotal+shipping+tax)
+        createOrder: function(data, actions) {
+          if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+          }
+          const { subtotal, ship, tax, total } = calcTotals();
+
+          const itemLines = cart.map(it => ({
+            name: it.name,
+            unit_amount: { currency_code: "USD", value: it.price.toFixed(2) },
+            quantity: String(it.qty)
+          }));
+
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                currency_code: "USD",
+                value: total.toFixed(2),
+                breakdown: {
+                  item_total: { currency_code:"USD", value: subtotal.toFixed(2) },
+                  shipping:   { currency_code:"USD", value: ship.toFixed(2) },
+                  tax_total:  { currency_code:"USD", value: tax.toFixed(2) }
+                }
+              },
+              items: itemLines,
+              description: "Emma’s Jewelry Order"
+            }],
+            application_context: { shipping_preference: "GET_FROM_FILE" }
+          });
+        },
+
+        // Capture the order
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            const totals = calcTotals();
+            const receipt = {
+              id: details.id,
+              payer: details.payer?.name?.given_name || "Customer",
+              email: details.payer?.email_address || "",
+              totals,
+              items: cart,
+              when: new Date().toISOString(),
+            };
+            localStorage.setItem("emma_last_order", JSON.stringify(receipt));
+            localStorage.removeItem(CART_KEY);
+
+            const msg = document.getElementById('success');
+            msg.style.display = 'block';
+            setTimeout(()=>{ window.location.href = "thankyou.html"; }, 1000);
+          });
+        },
+
+        onError: function(err) {
+          console.error(err);
+          alert("There was a problem processing your payment. Please try again.");
+        }
+      }).render('#paypal-buttons');
+    }
   </script>
 </body>
 </html>

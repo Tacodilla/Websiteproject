@@ -1,4 +1,4 @@
-/* ====== Data (edit as you like) ====== */
+/* ====== Data ====== */
 const PRODUCTS = [
   {
     id: "inez-bracelet",
@@ -8,7 +8,7 @@ const PRODUCTS = [
     href: "payment.html",
   },
   {
-    id: "gemstone-bracelet",
+    id: "amethyst-bracelet",
     name: "Amethyst Gem Bracelet",
     price: 62,
     img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200",
@@ -20,7 +20,7 @@ const PRODUCTS = [
     img: "https://images.unsplash.com/photo-1585386959984-a41552231664?q=80&w=1200",
   },
   {
-    id: "pendant-necklace",
+    id: "luna-pendant",
     name: "Luna Pendant Necklace",
     price: 74,
     img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1200",
@@ -29,17 +29,16 @@ const PRODUCTS = [
 
 /* ====== Helpers ====== */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
-const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 const money = (n) => `$${n.toFixed(2)}`;
 
 /* ====== Render Products ====== */
 function renderProducts(list) {
-  const grid = $("#gallery");
+  const grid = $("#grid");
   grid.innerHTML = "";
   list.forEach((p) => {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.innerHTML = `
+    const el = document.createElement("article");
+    el.className = "card";
+    el.innerHTML = `
       <img class="card-img" src="${p.img}" alt="${p.name}">
       <div class="card-body">
         <div class="card-title">${p.name}</div>
@@ -54,11 +53,11 @@ function renderProducts(list) {
         <button class="btn btn-primary add-btn" data-id="${p.id}">Add to Cart</button>
       </div>
     `;
-    grid.appendChild(card);
+    grid.appendChild(el);
   });
 }
 
-/* ====== Sorting ====== */
+/* ====== Sorting & Search ====== */
 function sortProducts(mode) {
   const arr = [...PRODUCTS];
   switch (mode) {
@@ -69,8 +68,6 @@ function sortProducts(mode) {
   }
   renderProducts(arr);
 }
-
-/* ====== Search ====== */
 function filterBySearch() {
   const q = $("#search-input")?.value.trim().toLowerCase() || "";
   const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q));
@@ -80,18 +77,10 @@ function filterBySearch() {
 /* ====== Cart State (persisted) ====== */
 const CART_KEY = "emma_cart_v1";
 let cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
-
 function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
-
-function cartCount(){
-  return cart.reduce((n,it)=>n+it.qty,0);
-}
-function subtotal(){
-  return cart.reduce((s,it)=>s + it.qty*it.price, 0);
-}
-function updateBadge(){
-  $("#cart-count").textContent = cartCount();
-}
+function cartCount(){ return cart.reduce((n,it)=>n+it.qty,0); }
+function subtotal(){ return cart.reduce((s,it)=>s + it.qty*it.price, 0); }
+function updateBadge(){ $("#cart-count").textContent = cartCount(); }
 
 /* ====== Cart Drawer ====== */
 const drawer = $("#cart-drawer");
@@ -145,22 +134,22 @@ function renderCart(){
   updateBadge();
 }
 
-/* ====== Add / Change Qty ====== */
+/* ====== Quantity & Add to Cart ====== */
 document.addEventListener("click", (e)=>{
-  // change card quantity pills
+  // change qty on product card
   if(e.target.matches(".qty-plus,.qty-minus")){
     const pill = e.target.closest(".qty-pill");
-    const qtyEl = $(".qty", pill);
+    const qtyEl = pill.querySelector(".qty");
     let q = parseInt(qtyEl.textContent,10);
     q = e.target.matches(".qty-plus") ? q+1 : Math.max(1, q-1);
     qtyEl.textContent = q;
   }
 
-  // add to cart from grid
+  // add to cart
   if(e.target.matches(".add-btn")){
     const id = e.target.dataset.id;
     const card = e.target.closest(".card");
-    const qty = parseInt($(".qty", card).textContent,10);
+    const qty = parseInt(card.querySelector(".qty").textContent,10);
     const p = PRODUCTS.find(x=>x.id===id);
     const existing = cart.find(x=>x.id===id);
     if(existing){ existing.qty += qty; }
@@ -188,8 +177,8 @@ $(".search")?.addEventListener("submit",(e)=>{ e.preventDefault(); filterBySearc
 $("#search-input")?.addEventListener("input", filterBySearch);
 
 /* ====== Nav interactions ====== */
-const navToggle = $(".nav-toggle");
-const nav = $("#nav-primary");
+const navToggle = document.querySelector(".nav-toggle");
+const nav = document.querySelector("#nav-primary");
 navToggle.addEventListener("click", ()=>{
   const open = nav.classList.toggle("open");
   navToggle.setAttribute("aria-expanded", open ? "true" : "false");

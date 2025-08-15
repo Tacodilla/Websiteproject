@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Thank You • Emma’s Jewelry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --purple-50:#f8f4fc; --purple-200:#e2d3f6; --purple-500:#7d4a8b; --purple-700:#5a3370;
+      --gold-500:#c49b22; --ink:#1f1b24; --muted:#6d6676; --line:#e8e2ef; --white:#fff;
+    }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--purple-50);color:var(--ink)}
+    header{background:var(--white);border-bottom:1px solid var(--line)}
+    .wrap{max-width:900px;margin:0 auto;padding:1.25rem}
+    .brand{font-family:"Playfair Display",serif;font-size:1.4rem;text-decoration:none;color:var(--ink)}
+    .brand span{color:var(--purple-700)}
+    .card{background:#fff;border:1px solid var(--line);border-radius:.75rem;padding:1rem}
+    h1{font-family:"Playfair Display",serif}
+    .summary{margin-top:1rem;display:grid;grid-template-columns:1fr;gap:1rem}
+    .row{display:flex;justify-content:space-between;margin:.25rem 0}
+    .items .item{display:grid;grid-template-columns:64px 1fr auto;gap:.75rem;align-items:center;border-bottom:1px solid var(--line);padding:.5rem 0}
+    .items img{width:64px;height:64px;border-radius:.5rem;object-fit:cover}
+    .muted{color:var(--muted)}
+    .btn{display:inline-block;margin-top:1rem;text-decoration:none;background:var(--purple-700);color:#fff;padding:.6rem .9rem;border-radius:.5rem}
+    .btn:hover{background:var(--purple-500)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
+      <a class="brand" href="index.html">Emma’s <span>Jewelry</span></a>
+      <a class="btn" href="index.html">Continue Shopping</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h1>Thank you for your order! 💜</h1>
+      <p class="muted" id="order-line">We’ve sent a receipt to your email.</p>
+
+      <div class="summary">
+        <div>
+          <h3>Order Details</h3>
+          <div class="row"><span class="muted">Order ID</span><strong id="oid">—</strong></div>
+          <div class="row"><span class="muted">Customer</span><strong id="cname">—</strong></div>
+          <div class="row"><span class="muted">Date</span><strong id="odate">—</strong></div>
+        </div>
+
+        <div class="items" id="items"><!-- items injected --></div>
+
+        <div>
+          <h3>Totals</h3>
+          <div class="row"><span class="muted">Subtotal</span><strong id="t-sub">$0.00</strong></div>
+          <div class="row"><span class="muted">Shipping</span><strong id="t-ship">$0.00</strong></div>
+          <div class="row"><span class="muted">Tax</span><strong id="t-tax">$0.00</strong></div>
+          <div class="row"><span>Total</span><strong id="t-total">$0.00</strong></div>
+        </div>
+      </div>
+
+      <a class="btn" href="classes.html">Book a Crafting Class</a>
+    </div>
+  </main>
+
+  <script>
+    const money = n => `$${n.toFixed(2)}`;
+    const data = JSON.parse(localStorage.getItem("emma_last_order") || "null");
+
+    if(!data){
+      document.querySelector(".card").innerHTML = `
+        <h1>Hmm… no order found.</h1>
+        <p class="muted">If you just paid, try refreshing. Otherwise head back to the store.</p>
+        <a class="btn" href="index.html">Back to Store</a>
+      `;
+    } else {
+      document.getElementById("oid").textContent = data.id || "—";
+      document.getElementById("cname").textContent = data.payer || "Customer";
+      const dt = new Date(data.when); 
+      document.getElementById("odate").textContent = dt.toLocaleString();
+
+      // Items
+      const list = document.getElementById("items");
+      list.innerHTML = "<h3>Items</h3>";
+      data.items.forEach(it=>{
+        const row = document.createElement("div");
+        row.className = "item";
+        row.innerHTML = `
+          <img src="${it.img}" alt="${it.name}">
+          <div>
+            <div><strong>${it.name}</strong></div>
+            <div class="muted">Qty: ${it.qty}</div>
+          </div>
+          <div><strong>${money(it.price * it.qty)}</strong></div>
+        `;
+        list.appendChild(row);
+      });
+
+      // Totals
+      document.getElementById("t-sub").textContent = money(data.totals.subtotal);
+      document.getElementById("t-ship").textContent = money(data.totals.ship);
+      document.getElementById("t-tax").textContent = money(data.totals.tax);
+      document.getElementById("t-total").textContent = money(data.totals.total);
+    }
+  </script>
+</body>
+</html>
