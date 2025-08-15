@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment - Rose Quartz Bracelet</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .payment-page {
+      max-width: 500px;
+      margin: 60px auto;
+      background: #fff0f0;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .payment-page h2 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 20px;
+    }
+
+    .payment-page input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .payment-page button {
+      background-color: #d67373;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .payment-page button:hover {
+      background-color: #b34c4c;
+    }
+
+    .confirmation {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-page">
+    <h2>Inez Initial Bracelet</h2>
+    <p><strong>Price:</strong> $45</p>
+    <form id="payment-form">
+      <input type="text" placeholder="Full Name" required />
+      <input type="email" placeholder="Email Address" required />
+      <input type="text" placeholder="Card Number" required />
+      <input type="text" placeholder="Expiry Date (MM/YY)" required />
+      <input type="text" placeholder="CVV" required />
+      <button type="submit">Pay $45</button>
+      <p class="confirmation"></p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('payment-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.querySelector('.confirmation').textContent = "✅ Payment successful! Thank you for your purchase.";
+      this.reset();
+    });
+  </script>
+</body>
+</html>

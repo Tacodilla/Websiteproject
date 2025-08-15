@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Emma’s Jewelry Boutique</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Promo bar -->
+  <div class="promo" role="region" aria-label="site promo">
+    Free shipping over $75 • New fall styles dropping weekly
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-primary" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <a class="logo" href="index.html" aria-label="Home">Emma’s <span>Jewelry</span></a>
+
+      <form class="search" role="search" aria-label="Site search">
+        <input id="search-input" type="search" placeholder="Search jewelry…" autocomplete="off" />
+        <button type="submit" aria-label="Search">🔍</button>
+      </form>
+
+      <div class="header-actions">
+        <a class="account" href="#" aria-label="Account">👤</a>
+        <button class="cart-btn" id="cart-btn" aria-label="Open cart" aria-haspopup="dialog" aria-expanded="false">
+          🛒 <span id="cart-count" class="badge">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Primary Nav + Mega -->
+    <nav id="nav-primary" class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-mega">
+          <button class="nav-link" aria-expanded="false">Shop</button>
+          <div class="mega" role="region" aria-label="Shop menu">
+            <div class="mega-col">
+              <h4>Bracelets</h4>
+              <a href="#gallery">Initial Bracelets</a>
+              <a href="#gallery">Chain Bracelets</a>
+              <a href="#gallery">Gemstone</a>
+            </div>
+            <div class="mega-col">
+              <h4>Necklaces</h4>
+              <a href="#gallery">Pendants</a>
+              <a href="#gallery">Personalized</a>
+              <a href="#gallery">Layers</a>
+            </div>
+            <div class="mega-col">
+              <h4>Earrings</h4>
+              <a href="#gallery">Studs</a>
+              <a href="#gallery">Hoops</a>
+              <a href="#gallery">Statement</a>
+            </div>
+            <div class="mega-cta">
+              <div class="mega-cta-card">
+                <p class="eyebrow">New</p>
+                <h3>Fall Sparkle</h3>
+                <p>Warm gemstones & rich metals made to layer.</p>
+                <a class="btn btn-gold" href="#gallery">Shop New Arrivals</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="#best-sellers">Best Sellers</a></li>
+        <li><a class="nav-link" href="classes.html">Classes</a></li>
+        <li><a class="nav-link" href="#about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" role="region" aria-label="Featured">
+    <div class="hero-inner">
+      <h1>Light Purple & Gold Elegance</h1>
+      <p>Hand-crafted pieces designed to celebrate everyday radiance.</p>
+      <a href="#gallery" class="btn btn-primary">Explore Collection</a>
+    </div>
+  </section>
+
+  <!-- Category tiles -->
+  <section class="tiles" aria-label="Shop by category">
+    <a class="tile" href="#gallery" style="--img:url('https://images.unsplash.com/photo-1603565816278-c5b6b9960f23?q=80&w=1200');">
+      <span>Bracelets</span>
+    </a>
+    <a class="tile" href="#gallery" style="--img:url('https://images.unsplash.com/photo-1520962918287-7448c2878f65?q=80&w=1200');">
+      <span>Necklaces</span>
+    </a>
+    <a class="tile" href="#gallery" style="--img:url('https://images.unsplash.com/photo-1520962722030-7f2a1b88b4f2?q=80&w=1200');">
+      <span>Earrings</span>
+    </a>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="about">
+    <div class="about-inner">
+      <div class="about-copy">
+        <p class="eyebrow">Our Story</p>
+        <h2>Crafted by hand, worn from the heart</h2>
+        <p>
+          I’m Emma — a self‑taught jewelry maker who fell in love with tiny tools and the
+          quiet alchemy of metal and stone. Every piece starts as a sketch in my notebook,
+          then is shaped, soldered, and finished in my sunny home studio. I favor
+          responsibly sourced metals, lab‑grown stones where possible, and packaging that’s
+          gentle on the planet.
+        </p>
+        <p>
+          My designs blend vintage romance and modern minimalism. Think: delicate chains,
+          personalized initials, and just‑right sparkle you can wear every day. Whether
+          you’re celebrating a milestone or treating yourself “just because,” I hope you
+          find something that feels like you.
+        </p>
+        <a href="classes.html" class="btn btn-gold">Join a crafting class</a>
+      </div>
+      <div class="about-media">
+        <img src="https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=1200" alt="Emma crafting jewelry at her bench">
+      </div>
+    </div>
+  </section>
+
+  <!-- Best sellers -->
+  <section id="best-sellers" class="section-pad">
+    <div class="section-head">
+      <h2>Best Sellers</h2>
+      <div class="sort">
+        <label for="sort">Sort</label>
+        <select id="sort">
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="gallery" class="grid">
+      <!-- JS renders products here -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-grid">
+      <div>
+        <h4>Help</h4>
+        <a href="#">Shipping</a>
+        <a href="#">Returns</a>
+        <a href="#">Care Guide</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="#about">Our Story</a>
+        <a href="classes.html">Classes</a>
+        <a href="#">Sustainability</a>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <a href="#">Instagram</a>
+        <a href="#">Pinterest</a>
+        <a href="#">Email Us</a>
+      </div>
+      <div>
+        <h4>Newsletter</h4>
+        <form class="newsletter" aria-label="newsletter">
+          <input type="email" placeholder="Email address" aria-label="Email" />
+          <button class="btn btn-primary" type="submit">Sign up</button>
+        </form>
+      </div>
+    </div>
+    <p class="legal">© 2025 Emma’s Jewelry Boutique • Hand‑crafted with love</p>
+  </footer>
+
+  <!-- Cart Drawer -->
+  <div id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
+    <div class="cart-head">
+      <h3 id="cart-title">Your Cart</h3>
+      <button id="cart-close" class="icon-btn" aria-label="Close cart">✕</button>
+    </div>
+    <div id="cart-items" class="cart-items" aria-live="polite"></div>
+    <div class="cart-foot">
+      <div class="subtotal">
+        <span>Subtotal</span>
+        <strong id="cart-subtotal">$0.00</strong>
+      </div>
+      <a class="btn btn-primary btn-block" href="payment.html">Checkout</a>
+      <p class="cart-note">Taxes & shipping calculated at checkout.</p>
+    </div>
+  </div>
+  <div id="cart-backdrop" class="backdrop" hidden></div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

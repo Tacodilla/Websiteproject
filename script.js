@@ -1,0 +1,210 @@
+/* ====== Data (edit as you like) ====== */
+const PRODUCTS = [
+  {
+    id: "inez-bracelet",
+    name: "Inez Initial Bracelet",
+    price: 48,
+    img: "https://cdn.oakandluna.com/digital-asset/products/inez-initial-bracelets-gold-vermeil-1.jpg",
+    href: "payment.html",
+  },
+  {
+    id: "gemstone-bracelet",
+    name: "Amethyst Gem Bracelet",
+    price: 62,
+    img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200",
+  },
+  {
+    id: "gold-hoops",
+    name: "Golden Hoop Earrings",
+    price: 58,
+    img: "https://images.unsplash.com/photo-1585386959984-a41552231664?q=80&w=1200",
+  },
+  {
+    id: "pendant-necklace",
+    name: "Luna Pendant Necklace",
+    price: 74,
+    img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1200",
+  },
+];
+
+/* ====== Helpers ====== */
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+const money = (n) => `$${n.toFixed(2)}`;
+
+/* ====== Render Products ====== */
+function renderProducts(list) {
+  const grid = $("#gallery");
+  grid.innerHTML = "";
+  list.forEach((p) => {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.innerHTML = `
+      <img class="card-img" src="${p.img}" alt="${p.name}">
+      <div class="card-body">
+        <div class="card-title">${p.name}</div>
+        <div class="card-price">${money(p.price)}</div>
+      </div>
+      <div class="card-actions">
+        <div class="qty-pill" data-id="${p.id}">
+          <button class="qty-minus" aria-label="Decrease quantity">−</button>
+          <span class="qty" aria-live="polite">1</span>
+          <button class="qty-plus" aria-label="Increase quantity">+</button>
+        </div>
+        <button class="btn btn-primary add-btn" data-id="${p.id}">Add to Cart</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ====== Sorting ====== */
+function sortProducts(mode) {
+  const arr = [...PRODUCTS];
+  switch (mode) {
+    case "price-asc": arr.sort((a,b)=>a.price-b.price); break;
+    case "price-desc": arr.sort((a,b)=>b.price-a.price); break;
+    case "name-asc": arr.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    default: /* featured */ break;
+  }
+  renderProducts(arr);
+}
+
+/* ====== Search ====== */
+function filterBySearch() {
+  const q = $("#search-input")?.value.trim().toLowerCase() || "";
+  const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(q));
+  renderProducts(filtered);
+}
+
+/* ====== Cart State (persisted) ====== */
+const CART_KEY = "emma_cart_v1";
+let cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+
+function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+function cartCount(){
+  return cart.reduce((n,it)=>n+it.qty,0);
+}
+function subtotal(){
+  return cart.reduce((s,it)=>s + it.qty*it.price, 0);
+}
+function updateBadge(){
+  $("#cart-count").textContent = cartCount();
+}
+
+/* ====== Cart Drawer ====== */
+const drawer = $("#cart-drawer");
+const backdrop = $("#cart-backdrop");
+const cartBtn = $("#cart-btn");
+const cartClose = $("#cart-close");
+const cartItemsEl = $("#cart-items");
+const subtotalEl = $("#cart-subtotal");
+
+function openCart(){
+  drawer.classList.add("open");
+  cartBtn.setAttribute("aria-expanded","true");
+  backdrop.hidden = false;
+}
+function closeCart(){
+  drawer.classList.remove("open");
+  cartBtn.setAttribute("aria-expanded","false");
+  backdrop.hidden = true;
+}
+cartBtn.addEventListener("click", openCart);
+cartClose.addEventListener("click", closeCart);
+backdrop.addEventListener("click", closeCart);
+window.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
+
+function renderCart(){
+  cartItemsEl.innerHTML = "";
+  if(cart.length === 0){
+    cartItemsEl.innerHTML = `<p>Your cart is empty.</p>`;
+  } else {
+    cart.forEach(item=>{
+      const row = document.createElement("div");
+      row.className = "cart-item";
+      row.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <div>
+          <div class="title">${item.name}</div>
+          <div class="price">${money(item.price)}</div>
+          <div class="counter" data-id="${item.id}">
+            <button class="dec" aria-label="Decrease">−</button>
+            <span aria-live="polite">${item.qty}</span>
+            <button class="inc" aria-label="Increase">+</button>
+            <button class="remove" aria-label="Remove item" style="margin-left:.5rem">Remove</button>
+          </div>
+        </div>
+        <div><strong>${money(item.qty*item.price)}</strong></div>
+      `;
+      cartItemsEl.appendChild(row);
+    });
+  }
+  subtotalEl.textContent = money(subtotal());
+  updateBadge();
+}
+
+/* ====== Add / Change Qty ====== */
+document.addEventListener("click", (e)=>{
+  // change card quantity pills
+  if(e.target.matches(".qty-plus,.qty-minus")){
+    const pill = e.target.closest(".qty-pill");
+    const qtyEl = $(".qty", pill);
+    let q = parseInt(qtyEl.textContent,10);
+    q = e.target.matches(".qty-plus") ? q+1 : Math.max(1, q-1);
+    qtyEl.textContent = q;
+  }
+
+  // add to cart from grid
+  if(e.target.matches(".add-btn")){
+    const id = e.target.dataset.id;
+    const card = e.target.closest(".card");
+    const qty = parseInt($(".qty", card).textContent,10);
+    const p = PRODUCTS.find(x=>x.id===id);
+    const existing = cart.find(x=>x.id===id);
+    if(existing){ existing.qty += qty; }
+    else { cart.push({ id:p.id, name:p.name, price:p.price, img:p.img, qty }); }
+    saveCart(); renderCart(); openCart();
+  }
+
+  // cart controls
+  if(e.target.matches(".counter .inc,.counter .dec,.counter .remove")){
+    const id = e.target.closest(".counter").dataset.id;
+    const it = cart.find(x=>x.id===id);
+    if(!it) return;
+
+    if(e.target.matches(".inc")) it.qty += 1;
+    if(e.target.matches(".dec")) it.qty = Math.max(1, it.qty-1);
+    if(e.target.matches(".remove")) cart = cart.filter(x=>x.id!==id);
+
+    saveCart(); renderCart();
+  }
+});
+
+/* ====== Sorting & Search events ====== */
+$("#sort").addEventListener("change", (e)=>sortProducts(e.target.value));
+$(".search")?.addEventListener("submit",(e)=>{ e.preventDefault(); filterBySearch(); });
+$("#search-input")?.addEventListener("input", filterBySearch);
+
+/* ====== Nav interactions ====== */
+const navToggle = $(".nav-toggle");
+const nav = $("#nav-primary");
+navToggle.addEventListener("click", ()=>{
+  const open = nav.classList.toggle("open");
+  navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+});
+const megaToggle = document.querySelector(".has-mega > .nav-link");
+if(megaToggle){
+  megaToggle.addEventListener("click", ()=>{
+    const li = megaToggle.parentElement;
+    const expanded = li.getAttribute("aria-expanded")==="true";
+    li.setAttribute("aria-expanded", expanded ? "false" : "true");
+  });
+}
+
+/* ====== Init ====== */
+renderProducts(PRODUCTS);
+renderCart();
+sortProducts("featured");
+updateBadge();
