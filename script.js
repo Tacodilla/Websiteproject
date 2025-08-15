@@ -1,29 +1,29 @@
-/* ====== Data ====== */
+/* ====== Data (Celtic Moon Studios) ====== */
 const PRODUCTS = [
   {
-    id: "inez-bracelet",
-    name: "Inez Initial Bracelet",
-    price: 48,
-    img: "https://cdn.oakandluna.com/digital-asset/products/inez-initial-bracelets-gold-vermeil-1.jpg",
+    id: "knot-bracelet",
+    name: "Knotwork Cuff Bracelet",
+    price: 64,
+    img: "https://images.unsplash.com/photo-1603565816278-c5b6b9960f23?q=80&w=1200",
     href: "payment.html",
   },
   {
-    id: "amethyst-bracelet",
-    name: "Amethyst Gem Bracelet",
-    price: 62,
-    img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200",
-  },
-  {
-    id: "gold-hoops",
-    name: "Golden Hoop Earrings",
-    price: 58,
-    img: "https://images.unsplash.com/photo-1585386959984-a41552231664?q=80&w=1200",
-  },
-  {
-    id: "luna-pendant",
-    name: "Luna Pendant Necklace",
+    id: "moon-pendant",
+    name: "Lunar Pendant Necklace",
     price: 74,
     img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1200",
+  },
+  {
+    id: "braid-ring",
+    name: "Braided Band Ring",
+    price: 52,
+    img: "https://images.unsplash.com/photo-1520962918287-7448c2878f65?q=80&w=1200",
+  },
+  {
+    id: "emerald-drops",
+    name: "Emerald Drop Earrings",
+    price: 58,
+    img: "https://images.unsplash.com/photo-1520962722030-7f2a1b88b4f2?q=80&w=1200",
   },
 ];
 
@@ -34,6 +34,7 @@ const money = (n) => `$${n.toFixed(2)}`;
 /* ====== Render Products ====== */
 function renderProducts(list) {
   const grid = $("#grid");
+  if (!grid) return;
   grid.innerHTML = "";
   list.forEach((p) => {
     const el = document.createElement("article");
@@ -75,12 +76,14 @@ function filterBySearch() {
 }
 
 /* ====== Cart State (persisted) ====== */
-const CART_KEY = "emma_cart_v1";
-let cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+const CART_KEY = "cms_cart_v1";
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); } catch(e){ cart = []; }
+
 function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
 function cartCount(){ return cart.reduce((n,it)=>n+it.qty,0); }
 function subtotal(){ return cart.reduce((s,it)=>s + it.qty*it.price, 0); }
-function updateBadge(){ $("#cart-count").textContent = cartCount(); }
+function updateBadge(){ const el=$("#cart-count"); if(el) el.textContent = cartCount(); }
 
 /* ====== Cart Drawer ====== */
 const drawer = $("#cart-drawer");
@@ -91,21 +94,22 @@ const cartItemsEl = $("#cart-items");
 const subtotalEl = $("#cart-subtotal");
 
 function openCart(){
-  drawer.classList.add("open");
-  cartBtn.setAttribute("aria-expanded","true");
-  backdrop.hidden = false;
+  drawer?.classList.add("open");
+  cartBtn?.setAttribute("aria-expanded","true");
+  if (backdrop) backdrop.hidden = false;
 }
 function closeCart(){
-  drawer.classList.remove("open");
-  cartBtn.setAttribute("aria-expanded","false");
-  backdrop.hidden = true;
+  drawer?.classList.remove("open");
+  cartBtn?.setAttribute("aria-expanded","false");
+  if (backdrop) backdrop.hidden = true;
 }
-cartBtn.addEventListener("click", openCart);
-cartClose.addEventListener("click", closeCart);
-backdrop.addEventListener("click", closeCart);
+cartBtn?.addEventListener("click", openCart);
+cartClose?.addEventListener("click", closeCart);
+backdrop?.addEventListener("click", closeCart);
 window.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeCart(); });
 
 function renderCart(){
+  if(!cartItemsEl) return;
   cartItemsEl.innerHTML = "";
   if(cart.length === 0){
     cartItemsEl.innerHTML = `<p>Your cart is empty.</p>`;
@@ -130,7 +134,7 @@ function renderCart(){
       cartItemsEl.appendChild(row);
     });
   }
-  subtotalEl.textContent = money(subtotal());
+  if(subtotalEl) subtotalEl.textContent = money(subtotal());
   updateBadge();
 }
 
@@ -172,14 +176,14 @@ document.addEventListener("click", (e)=>{
 });
 
 /* ====== Sorting & Search events ====== */
-$("#sort").addEventListener("change", (e)=>sortProducts(e.target.value));
+$("#sort")?.addEventListener("change", (e)=>sortProducts(e.target.value));
 $(".search")?.addEventListener("submit",(e)=>{ e.preventDefault(); filterBySearch(); });
 $("#search-input")?.addEventListener("input", filterBySearch);
 
 /* ====== Nav interactions ====== */
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector("#nav-primary");
-navToggle.addEventListener("click", ()=>{
+navToggle?.addEventListener("click", ()=>{
   const open = nav.classList.toggle("open");
   navToggle.setAttribute("aria-expanded", open ? "true" : "false");
 });
